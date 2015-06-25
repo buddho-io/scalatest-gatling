@@ -1,0 +1,5 @@
+gatling-results/
+project/project/
+.history
+.idea/
+target/
