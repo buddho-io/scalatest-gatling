@@ -2,7 +2,7 @@
 lazy val commonSettings = Seq(
   organization := "io.buddho.scalatest",
   version := "0.1.0",
-  scalaVersion := "2.11.6",
+  scalaVersion := "2.11.7",
   resolvers ++= Seq(
     "Maven Central Server"    at "http://repo1.maven.org/maven2",
     "Sonatype OSS"            at "https://oss.sonatype.org/content/groups/public/",
@@ -11,6 +11,8 @@ lazy val commonSettings = Seq(
 )
 
 val gatlingVersion = "2.1.6"
+
+lazy val GatlingTest = config("gatling").extend(Test)
 
 lazy val root = (project in file(".")).
   aggregate(core, examples).
@@ -33,10 +35,13 @@ lazy val core = (project in file("core")).
   )
 
 lazy val examples = (project in file("examples")).
+  configs(GatlingTest).
   dependsOn(core).
   settings(commonSettings: _*).
+  settings(inConfig(GatlingTest)(Defaults.testSettings)).
   settings(
     name := "scalatest-gatling-examples",
+    scalaSource in GatlingTest := baseDirectory.value / "src" / "gatling" / "scala",
     libraryDependencies ++= {
       Seq(
         "io.gatling"            %  "gatling-core"               % gatlingVersion,
