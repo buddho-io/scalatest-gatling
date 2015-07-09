@@ -3,6 +3,10 @@ lazy val commonSettings = Seq(
   organization := "io.buddho.scalatest",
   version := "0.1.0",
   scalaVersion := "2.11.7",
+  bintrayOrganization := Some("buddho"),
+  bintrayRepository := "mvn-public",
+  bintrayReleaseOnPublish in ThisBuild := false,
+  licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0.html")),
   resolvers ++= Seq(
     "Maven Central Server"    at "http://repo1.maven.org/maven2",
     "Sonatype OSS"            at "https://oss.sonatype.org/content/groups/public/",
@@ -16,6 +20,7 @@ lazy val GatlingTest = config("gatling").extend(Test)
 
 lazy val root = (project in file(".")).
   aggregate(core, examples).
+  settings(commonSettings: _*).
   settings(
     name := "scalatest-gatling"
   )
