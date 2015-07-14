@@ -1,6 +1,6 @@
 package org.scalatest.fixture
 
-import io.buddho.scalatest.gatling.{Simulation, SimulationFixture}
+import io.buddho.scalatest.gatling.SimulationFixture
 import org.scalatest.OutcomeOf._
 import org.scalatest.Suite.autoTagClassAnnotations
 import org.scalatest._
@@ -30,7 +30,9 @@ trait SimulationFunSuiteLike extends fixture.Suite with Informing with Alerting 
       registerTestToRun(name, List(), "simulate", TestTransformer(simulationFun))
     }
 
-    def ignore(simulationFun: FixtureParam => Any): Unit = ???
+    def ignore(simulationFun: FixtureParam => Any): Unit = {
+      registerTestToIgnore(name, Nil, "ignore", TestTransformer(simulationFun))
+    }
 
     def taggedAs(firstTestTag: Tag, otherTestTags: Tag*): SimulateWordTaggedAs[Nothing] = {
       val tagList = firstTestTag :: otherTestTags.toList
@@ -47,14 +49,19 @@ trait SimulationFunSuiteLike extends fixture.Suite with Informing with Alerting 
 
   protected final class SimulateWordWithTiers[Tier](name: String, tierList: List[Tier]) {
 
-    def in(simulationFun: (Simulation, Tier) => Any): Unit = {
+    def in(simulationFun: (FixtureParam, Tier) => Any): Unit = {
       tierList.foldLeft(0)((c, tier) => {
         registerTestToRun(s"$name tier $c", List(), "simulate", TestWithTierTransformer(simulationFun, tier))
         c + 1
       })
     }
 
-    def ignore(simulationFun: FixtureParam => Any): Unit = ???
+    def ignore(simulationFun: (FixtureParam, Tier) => Any): Unit = {
+      tierList.foldLeft(0)((c, tier) => {
+        registerTestToIgnore(s"$name tier $c", Nil, "ignore", TestWithTierTransformer(simulationFun, tier))
+        c + 1
+      })
+    }
 
     def taggedAs(firstTestTag: Tag, otherTestTags: Tag*): SimulateWordWithTiersTaggedAs[Tier] = {
       val tagList = firstTestTag :: otherTestTags.toList
@@ -66,7 +73,7 @@ trait SimulationFunSuiteLike extends fixture.Suite with Informing with Alerting 
     def in(simulationFun: FixtureParam => Any): Unit =
       registerTestToRun(name, tagList, "simulate", TestTransformer(simulationFun))
 
-    def ignore(simulationFun: FixtureParam => Any): Unit = ???
+    def ignore(simulationFun: FixtureParam => Any): Unit = registerTestToIgnore(name, tagList, "ignore", TestTransformer(simulationFun))
 
     def withTiers(tiers: List[Tier]): SimulateWordWithTiersTaggedAs[Tier] = withTiers(tiers.head, tiers.tail: _*)
 
@@ -84,7 +91,12 @@ trait SimulationFunSuiteLike extends fixture.Suite with Informing with Alerting 
       })
     }
 
-    def ignore(simulationFun: FixtureParam => Any): Unit = ???
+    def ignore(simulationFun: (FixtureParam, Tier) => Any): Unit = {
+      tierList.foldLeft(0)((c, tier) => {
+        registerTestToIgnore(s"$name tier $c", tagList, "ignore", TestWithTierTransformer(simulationFun, tier))
+        c + 1
+      })
+    }
   }
 
   def simulate(name: String): SimulateWord = new SimulateWord(name)
@@ -106,6 +118,10 @@ trait SimulationFunSuiteLike extends fixture.Suite with Informing with Alerting 
    */
   private case class TestTransformer[Tier](testFun: FixtureParam => Any) extends (FixtureParam => Outcome) {
     def apply(fixture: FixtureParam): Outcome = outcomeOf( testFun(fixture) )
+  }
+
+  private def registerTestToIgnore(specText: String, testTags: List[Tag], methodName: String, testFun: FixtureParam => Outcome): Unit = {
+    registerIgnoredTest(specText, testFun, "ignoreCannotAppearInsideAnIn", sourceFileName, methodName, 6, -2, None, testTags: _*)
   }
 
   private def registerTestToRun(specText: String, testTags: List[Tag], methodName: String, testFun: FixtureParam => Outcome) {

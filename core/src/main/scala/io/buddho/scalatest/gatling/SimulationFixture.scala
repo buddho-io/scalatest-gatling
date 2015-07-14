@@ -11,8 +11,11 @@ import io.gatling.core.config.GatlingConfiguration
 import io.gatling.core.config.GatlingConfiguration._
 import io.gatling.core.controller.{Controller, Run}
 import io.gatling.core.result.reader.DataReader
-import io.gatling.core.scenario.{Simulation => GatlingSimulation}
-import org.scalatest.{fixture, _}
+import org.scalatest.fixture
+import org.scalatest.BeforeAndAfterAllConfigMap
+import org.scalatest.ConfigMap
+import org.scalatest.Outcome
+import org.scalatest.exceptions.TestFailedException
 
 import scala.collection.mutable
 import scala.concurrent.duration._
@@ -57,7 +60,7 @@ trait SimulationFixture extends BeforeAndAfterAllConfigMap with StrictLogging {
     val termSignal = Promise[Unit]()
 
     GatlingActorSystem.start()
-    system.registerOnTermination(termSignal.success())
+    system.registerOnTermination(termSignal.success(()))
 
     System.gc()
     System.gc()
@@ -76,11 +79,13 @@ trait SimulationFixture extends BeforeAndAfterAllConfigMap with StrictLogging {
     } finally {
       GatlingActorSystem.shutdown()
       // block until gatling actor system terminates
-      Await.result(termSignal.future, 10 seconds)
+      Await.result(termSignal.future, 10.seconds)
     }
   }
 
   private def run(simulation: Simulation): Unit = {
+    import scala.language.reflectiveCalls
+
     simulation.simulation.setUp()
 
     implicit val timeOut = Timeout(simulation.timeout.seconds)

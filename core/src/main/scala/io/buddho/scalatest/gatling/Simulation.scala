@@ -6,7 +6,7 @@ import io.gatling.core.config.{Protocol, Protocols}
 import io.gatling.core.controller.Timings
 import io.gatling.core.controller.throttle.{Throttling, ThrottlingProtocol}
 import io.gatling.core.pause._
-import io.gatling.core.scenario.{Simulation => GatlingSimulation, Scenario}
+import io.gatling.core.scenario.{Simulation => GatlingSimulation}
 import io.gatling.core.session._
 import io.gatling.core.structure.PopulatedScenarioBuilder
 

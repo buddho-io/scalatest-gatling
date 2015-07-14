@@ -1,8 +1,9 @@
 
 lazy val commonSettings = Seq(
   organization := "io.buddho.scalatest",
-  version := "0.1.0",
+  version := "0.1.1-SNAPSHOT",
   scalaVersion := "2.11.7",
+  scalacOptions := Seq("-unchecked", "-deprecation", "-feature"),
   bintrayOrganization := Some("buddho"),
   bintrayRepository := "mvn-public",
   bintrayReleaseOnPublish in ThisBuild := false,

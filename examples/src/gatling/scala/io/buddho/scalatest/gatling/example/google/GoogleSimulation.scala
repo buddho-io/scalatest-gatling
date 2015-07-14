@@ -61,9 +61,9 @@ class GoogleSimulation extends fixture.SimulationFunSuite {
           chromeBrowser.baseURL("https://www.google.com")
         )
     ).assertions(
-        global.responseTime.max lessThan (3 seconds),
-        details("Home").responseTime.max lessThan (1.8 seconds),
-        details("Search").responseTime.max lessThan (2 seconds)
+        global.responseTime.max lessThan 3.seconds,
+        details("Home").responseTime.max lessThan 1.8.seconds,
+        details("Search").responseTime.max lessThan 2.seconds
       )
 
   }
@@ -81,7 +81,7 @@ class GoogleSimulation extends fixture.SimulationFunSuite {
           chromeBrowser.baseURL("https://www.google.com")
         )
     ).assertions(
-        global.responseTime.max lessThan (1 millis)
+        global.responseTime.max lessThan 1.millis
       )
   }
 
