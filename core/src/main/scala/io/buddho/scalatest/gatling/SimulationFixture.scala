@@ -15,7 +15,7 @@ import org.scalatest.fixture
 import org.scalatest.BeforeAndAfterAllConfigMap
 import org.scalatest.ConfigMap
 import org.scalatest.Outcome
-import org.scalatest.exceptions.TestFailedException
+import org.scalatest.exceptions.{StackDepthException, TestCanceledException, TestFailedException}
 
 import scala.collection.mutable
 import scala.concurrent.duration._
@@ -47,6 +47,21 @@ trait SimulationFixture extends BeforeAndAfterAllConfigMap with StrictLogging {
   }
 
   def withFixture(test: OneArgTest): Outcome = {
+
+    val skipTiers = test.configMap.getWithDefault("gatling.tiers.skip", "false").toBoolean
+    val runTiers = test.configMap.getWithDefault("gatling.tiers.run", "").split(",").map(_.trim.toInt).toList
+
+    val tier = simulationTier(test)
+
+    if (tier.isDefined) {
+      if (skipTiers && tier.get > 0) {
+        throw new TestCanceledException((s: StackDepthException) => Some(s"Tier ${tier.get} skipped"), None, (s: StackDepthException) => 1, None)
+      } else if (runTiers.nonEmpty && !runTiers.contains(tier.get)) {
+        throw new TestCanceledException((s: StackDepthException) => Some(s"Tier ${tier.get} skipped"), None, (s: StackDepthException) => 1, None)
+      }
+    }
+
+
     val simulation = new Simulation(simulationName(test))
     val noArgTest = test.toNoArgTest(simulation)
     val testRunner = () => withFixture(noArgTest)
@@ -125,6 +140,14 @@ trait SimulationFixture extends BeforeAndAfterAllConfigMap with StrictLogging {
     val indexFile = ReportsGenerator.generateFor(reportsGenerationInputs)
     logger.info(s"Reports generated in ${(currentTimeMillis - start) / 1000}s.")
     logger.info(s"Please open the following file: ${indexFile.toAbsolutePath.toFile}")
+  }
+
+  private def simulationTier(test: OneArgTest): Option[Int] = {
+    val TierRE = "^.*_tier_(\\d)$".r
+    simulationName(test) match {
+      case TierRE(tier) => Some(tier.toInt)
+      case _ => None
+    }
   }
 
   private def simulationName(test: OneArgTest): String =

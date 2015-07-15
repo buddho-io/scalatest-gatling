@@ -51,7 +51,7 @@ trait SimulationFunSuiteLike extends fixture.Suite with Informing with Alerting 
 
     def in(simulationFun: (FixtureParam, Tier) => Any): Unit = {
       tierList.foldLeft(0)((c, tier) => {
-        registerTestToRun(s"$name tier $c", List(), "simulate", TestWithTierTransformer(simulationFun, tier))
+        registerTestToRun(s"$name tier $c", Nil, "simulate", TestWithTierTransformer(simulationFun, tier))
         c + 1
       })
     }
