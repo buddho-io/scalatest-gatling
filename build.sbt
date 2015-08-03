@@ -1,7 +1,7 @@
 
 lazy val commonSettings = Seq(
   organization := "io.buddho.scalatest",
-  git.baseVersion := "0.1.2",
+  git.baseVersion := "0.1.3",
   scalaVersion := "2.11.7",
   scalacOptions := Seq("-unchecked", "-deprecation", "-feature"),
   bintrayOrganization := Some("buddho"),
