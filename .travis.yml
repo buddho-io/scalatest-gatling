@@ -1,8 +1,23 @@
 language: scala
 scala:
-  - 2.11.7
+- 2.11.7
 script:
-  - sbt test
+- sbt scalastyle test
+after_success:
+# if this isn't a PR build then publish the artifacts
+- '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && sbt publish || true'
+cache:
+  directories:
+  - $HOME/.m2
+  - $HOME/.ivy2
 notifications:
   email:
-    - llinder@gmail.com
+  - llinder@gmail.com
+before_install:
+- '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && sh "${TRAVIS_BUILD_DIR}/travis-ci-bintray-credentials.sh" || true'
+env:
+  global:
+    # BINTRAY_USERNAME
+    # BINTRAY_API_KEY
+    - secure: "g5JqLMRItoG3u8tQGB8dRbtXZhMDPgFRU+K0cGo7jtxZJUcGxH4/2Wi8ZkgmgBkdi/d0bP64K+SqYzliVOiBMWA41xQsWB0kOQU9phA7yDWeU/WGtVa3hHJk4MNGB3Y+sGk3ocXFculCbXII2ts1YHt49XuYYjExBSC5JFRQGSx87S0ek9QdEA143CnZy92ajTGAj9JdIAZpqlLNdti5glvN98BSP7aEtFqFF7IBs5B8Urn5Nfg1MFoOs8jRadbgVjAF5DyBjOSx24cJIKC7VcS9HQHumaf09PnM+05lxJBAXXqf0At0cZJM8gkG8vqCDqnXoIL+HK0SR0A05yY9gNdQWYzGj5BMVHCtBTZlb1ycuvx8YN5g9lz9i1baopKwM8g6pGLCpczhrwHxoa0dj7wpYVAs539SozDs+60T382Zqv2busKRPcHtAS2Oni4vsdOMKDJH4U1Fv8Ms0ItD7S7lcDcvdUPiWInomkLdSq0zjCg27jXfqv/aae/HHWWxN4ppSAjmRZYY3KYiLEceY3C2ulX24mJQiNXxS+wTFDb+xNHsDOID/qU6Vdb/CUqp+BuWv2GYrAkfP1rCPWIw+V+ZZIGNFA3SeBdxe40Bsklnmsx98cZoxI/H8p1IWWMv8R6galKdHtPiOp4Ol/UQ3sK4551RSWGakuOdOLzJo2Y="
+    - secure: "fbAvjGQP75L26ISmrnSUG2Lx6PXB80+HxMAavoo2sixSZ0q1yZu+/Xht8a+TAhN6DElHckKegwALPIfTvFX8uNEqEAn/0FdjI428jcYHhXwFBF26ydA69BKsIzKKv0xGPy0vjgtNI088UnC4VVQyvG2tXVDL2MxcGWr6Xe21pO/geyn77Ney6H6p40NXiYajBjiE9Q0F3mEhPSDqfwTc/DF2nzav0V3y5xZDl/n+/xly2iqNJWQ+qnvKPJTLtIB7uex+6R1Dg++Yav2U5MWzVxYr9bDzIgh2EjZlbmRjB38z48d2Cy4oHBvLisu5HEe43+WuLEH7nYOf7FNOaIR39+JfMQKM54enKubOfvk/0bL8+WSiBjcW2zjbsS7Jxz4Q15xaau5KBxwmvURF3SB+4Tg9uR6a3hGQ2ZK6xl2x1dR1QIEPTr5/Ab+OWBobAeFjGbjFL4S4o+intq8Hnkzz6Iv65iYD3J+WIvu6QNcYr/57MV1MpNqW/Y14jqOg7KQfbU7G7j51xIVrgjbTxLYIUXE9DsuYOpcP/LuMSiUqJJer4NuiCaMV6f6s03WJeCFapPAI5/4nyRTKuuzCALjuT2KxaqQWESTQad2/QqjILwHjplrbKjPflKGgDlcphlqSF+2FB/q+YPDfkkPeucC/OGmvMG+pd0ukbaLags1fBV0="
