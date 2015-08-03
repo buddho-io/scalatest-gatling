@@ -48,8 +48,14 @@ trait SimulationFixture extends BeforeAndAfterAllConfigMap with StrictLogging {
 
   def withFixture(test: OneArgTest): Outcome = {
 
-    val skipTiers = test.configMap.getWithDefault("gatling.tiers.skip", "false").toBoolean
-    val runTiers = test.configMap.getWithDefault("gatling.tiers.run", "").split(",").map(_.trim.toInt).toList
+    val skipTiers = test.configMap.get("gatling.tiers.skip") match {
+      case Some(skip) => skip.asInstanceOf[String].toBoolean
+      case None => false
+    }
+    val runTiers: List[Int] = test.configMap.get("gatling.tiers.run") match {
+      case Some(tiers) => tiers.asInstanceOf[String].split(",").map(_.toInt).toList
+      case None => List[Int]()
+    }
 
     val tier = simulationTier(test)
 

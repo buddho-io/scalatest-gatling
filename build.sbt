@@ -1,12 +1,11 @@
 
 lazy val commonSettings = Seq(
   organization := "io.buddho.scalatest",
-  version := "0.1.1",
+  git.baseVersion := "0.1.2",
   scalaVersion := "2.11.7",
   scalacOptions := Seq("-unchecked", "-deprecation", "-feature"),
   bintrayOrganization := Some("buddho"),
   bintrayRepository := "mvn-public",
-  bintrayReleaseOnPublish in ThisBuild := false,
   licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0.html")),
   resolvers ++= Seq(
     "Maven Central Server"    at "http://repo1.maven.org/maven2",
@@ -15,12 +14,13 @@ lazy val commonSettings = Seq(
   )
 )
 
-val gatlingVersion = "2.1.6"
+val gatlingVersion = "2.1.7"
 
 lazy val GatlingTest = config("gatling").extend(Test)
 
 lazy val root = (project in file(".")).
   aggregate(core, examples).
+  enablePlugins( GitVersioning, GitBranchPrompt).
   settings(commonSettings: _*).
   settings(
     name := "scalatest-gatling"
