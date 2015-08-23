@@ -3,7 +3,7 @@ package io.buddho.scalatest.gatling
 import java.lang.System._
 
 import akka.util.Timeout
-import com.typesafe.scalalogging.StrictLogging
+import com.typesafe.scalalogging.{LazyLogging, StrictLogging}
 import io.gatling.charts.report.{ReportsGenerationInputs, ReportsGenerator}
 import io.gatling.core.akka.GatlingActorSystem
 import io.gatling.core.assertion.AssertionValidator
@@ -23,7 +23,7 @@ import scala.concurrent.{Await, Promise, TimeoutException}
 import scala.util.{Failure, Success}
 
 
-trait SimulationFixture extends BeforeAndAfterAllConfigMap with StrictLogging {
+trait SimulationFixture extends BeforeAndAfterAllConfigMap with LazyLogging {
   this: fixture.Suite =>
 
   type FixtureParam = Simulation
