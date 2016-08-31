@@ -2,7 +2,7 @@
 lazy val commonSettings = Seq(
   organization := "io.buddho.scalatest",
   git.baseVersion := "0.1.3",
-  scalaVersion := "2.11.7",
+  scalaVersion := "2.11.8",
   scalacOptions := Seq("-unchecked", "-deprecation", "-feature"),
   bintrayOrganization := Some("buddho"),
   bintrayRepository := "mvn-public",
@@ -14,7 +14,7 @@ lazy val commonSettings = Seq(
   )
 )
 
-val gatlingVersion = "2.1.7"
+val gatlingVersion = "2.2.0"
 
 lazy val GatlingTest = config("gatling").extend(Test)
 
@@ -35,7 +35,7 @@ lazy val core = (project in file("core")).
         "io.gatling" % "gatling-core" % gatlingVersion,
         "io.gatling" % "gatling-http" % gatlingVersion,
         "io.gatling" % "gatling-charts" % gatlingVersion,
-        "org.scalatest" %% "scalatest" % "2.2.4"
+        "org.scalatest" %% "scalatest" % "2.2.5"
       )
     }
   )
@@ -53,7 +53,7 @@ lazy val examples = (project in file("examples")).
         "io.gatling"            %  "gatling-core"               % gatlingVersion,
         "io.gatling"            %  "gatling-http"               % gatlingVersion,
         "io.gatling.highcharts" %  "gatling-charts-highcharts"  % gatlingVersion,
-        "org.scalatest"         %% "scalatest"                  % "2.2.4" % "test",
+        "org.scalatest"         %% "scalatest"                  % "2.2.5" % "test",
         "org.pegdown"           %  "pegdown"                    % "1.0.2" % "test" // required for ScalaTest HTML reports
       )
     }
